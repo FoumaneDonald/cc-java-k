@@ -13,7 +13,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "lots_bulletin_paie")
+@Table(name = "lots_bulletin_paie", indexes = {
+    @Index(name = "idx_lot_periode", columnList = "mois, annee"),
+    @Index(name = "idx_lot_statut", columnList = "statut"),
+    @Index(name = "idx_lot_periode_statut", columnList = "mois, annee, statut")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

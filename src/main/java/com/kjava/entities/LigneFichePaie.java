@@ -12,7 +12,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "lignes_fiche_paie")
+@Table(name = "lignes_fiche_paie", indexes = {
+    @Index(name = "idx_ligne_fiche_id", columnList = "ficheDePaie_id"),
+    @Index(name = "idx_ligne_regle_id", columnList = "regleSalariale_id"),
+    @Index(name = "idx_ligne_fiche_regle", columnList = "ficheDePaie_id, regleSalariale_id")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

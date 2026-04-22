@@ -15,6 +15,10 @@ import java.util.UUID;
 @Entity
 @Table(name = "regles_salariales", uniqueConstraints = {
     @UniqueConstraint(columnNames = "code")
+}, indexes = {
+    @Index(name = "idx_regle_type", columnList = "type"),
+    @Index(name = "idx_regle_recurrente", columnList = "isRecurrente"),
+    @Index(name = "idx_regle_type_recurrente", columnList = "type, isRecurrente")
 })
 @Data
 @NoArgsConstructor

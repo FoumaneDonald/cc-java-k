@@ -14,7 +14,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "fiches_de_paie")
+@Table(name = "fiches_de_paie", indexes = {
+    @Index(name = "idx_fiche_employee_id", columnList = "employeeId"),
+    @Index(name = "idx_fiche_statut", columnList = "statut"),
+    @Index(name = "idx_fiche_lot_id", columnList = "lotBulletinPaie_id"),
+    @Index(name = "idx_fiche_employee_period", columnList = "employeeId, lotBulletinPaie_id")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
