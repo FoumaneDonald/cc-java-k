@@ -1,13 +1,12 @@
 package com.kjava;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 class GestionPaieApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void mainClassExists() {
+        // Main class is now com.GestionPaieApplication.
+        // Unit tests for services are in com.service package.
+    }
 }

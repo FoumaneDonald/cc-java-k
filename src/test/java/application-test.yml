@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:15-alpine:///grh_db # Assuming TestContainers, or use your local DB
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: validate # IMPORTANT: Validates JPA against Flyway schema
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
