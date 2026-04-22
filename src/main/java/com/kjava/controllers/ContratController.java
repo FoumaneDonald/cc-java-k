@@ -41,6 +41,12 @@ public class ContratController {
         return ResponseEntity.ok(contratService.annulerContrat(id, motif));
     }
 
+    // ✅ NOUVEAU
+    @PutMapping("/{id}/terminer")
+    public ResponseEntity<Contrat> terminer(@PathVariable Long id) {
+        return ResponseEntity.ok(contratService.terminerContrat(id));
+    }
+
     @GetMapping
     public List<Contrat> getAll() {
         return contratService.findAll();

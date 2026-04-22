@@ -35,19 +35,32 @@ public class ContratService {
 
         contrat.setStatut(Contrat.StatutContrat.EN_COURS);
         
-        // Ici, ajouter l'appel pour mettre à jour M1 et M3 (Structure salariale)
         return contratRepository.save(contrat);
     }
 
     // RG-M4-07 : Annuler un contrat
     public Contrat annulerContrat(Long id, String motif) {
         if (motif == null || motif.isEmpty()) throw new RuntimeException("Motif obligatoire");
-        Contrat contrat = contratRepository.findById(id).get();
+        Contrat contrat = contratRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Contrat introuvable"));
         contrat.setStatut(Contrat.StatutContrat.ANNULE);
         return contratRepository.save(contrat);
     }
 
-	public List<Contrat> findAll() {
-		return contratRepository.findAll();
-	}
+    // ✅ NOUVEAU : UC-M4-03 : Terminer un contrat
+    public Contrat terminerContrat(Long id) {
+        Contrat contrat = contratRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Contrat introuvable"));
+
+        if (contrat.getStatut() != Contrat.StatutContrat.EN_COURS) {
+            throw new RuntimeException("Seul un contrat EN_COURS peut être terminé");
+        }
+
+        contrat.setStatut(Contrat.StatutContrat.TERMINE);
+        return contratRepository.save(contrat);
+    }
+
+    public List<Contrat> findAll() {
+        return contratRepository.findAll();
+    }
 }
