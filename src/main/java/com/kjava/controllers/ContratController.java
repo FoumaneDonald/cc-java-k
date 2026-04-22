@@ -1,10 +1,10 @@
 package com.kjava.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,8 +17,7 @@ import com.kjava.models.Contrat;
 import com.kjava.services.ContratService;
 
 @RestController
-@RequestMapping("/api/contrats")
-@CrossOrigin(origins = "http://localhost:3000") // Pour autoriser React
+@RequestMapping("/contrats")
 public class ContratController {
 
     @Autowired
@@ -34,8 +33,16 @@ public class ContratController {
         return ResponseEntity.ok(contratService.activerContrat(id));
     }
 
+    @PutMapping("/{id}/annuler")
+    public ResponseEntity<Contrat> annuler(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
+        String motif = body.get("motif");
+        return ResponseEntity.ok(contratService.annulerContrat(id, motif));
+    }
+
     @GetMapping
     public List<Contrat> getAll() {
-        return contratService.findAll(); // à ajouter dans le service
+        return contratService.findAll();
     }
 }
