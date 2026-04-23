@@ -1,8 +1,9 @@
-package com.kjava.controllers;
+package com.kjava.controllers.contrats;
 
-import com.kjava.config.JwtUtil;
-import com.kjava.models.Employe;
-import com.kjava.services.EmployeService;
+import com.kjava.config.contrats.JwtUtil;
+import com.kjava.models.contrats.Employe;
+import com.kjava.services.contrats.EmployeService;
+
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -4,7 +4,7 @@ import { getAllContrats, activerContrat, annulerContrat, terminerContrat } from 
 import { logout, getNom } from '../services/authService';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3004';
+const API_URL = 'http://localhost:3004'; // ← OK, backend tourne sur port 3004
 const getHeaders = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
 
 const Icon = ({ name, size = 16 }) => {
@@ -71,7 +71,7 @@ const DirecteurDashboard = () => {
   const [editEmpId, setEditEmpId] = useState(null);
   const [formCat, setFormCat] = useState({ code: '', libelle: '' });
   const [editCatId, setEditCatId] = useState(null);
-  const [formEch, setFormEch] = useState({ code: '', indiceSalarial: '', categorieId: '' });
+  const [formEch, setFormEch] = useState({ code: '', indiceSalarial: '' });
   const [editEchId, setEditEchId] = useState(null);
   const [motif, setMotif] = useState('');
 
@@ -104,10 +104,10 @@ const DirecteurDashboard = () => {
         echelons: ech.data?.length || 0
       });
       
-      setEmployes(e.data); 
-      setContrats(c.data);
-      setCategories(cat.data); 
-      setEchelons(ech.data);
+      setEmployes(Array.isArray(e.data) ? e.data : []); 
+      setContrats(Array.isArray(c.data) ? c.data : []);
+      setCategories(Array.isArray(cat.data) ? cat.data : []); 
+      setEchelons(Array.isArray(ech.data) ? ech.data : []);
       
       console.log('État après setCategories:', cat.data);
       
@@ -164,11 +164,11 @@ const DirecteurDashboard = () => {
     catch { setError('Erreur suppression catégorie'); }
   };
 
-  const openCreateEch = () => { setEditEchId(null); setFormEch({ code: '', indiceSalarial: '', categorieId: '' }); setModalEch(true); };
-  const openEditEch = (e) => { setEditEchId(e.id); setFormEch({ code: e.code, indiceSalarial: e.indiceSalarial, categorieId: e.categorie?.id || '' }); setModalEch(true); };
+  const openCreateEch = () => { setEditEchId(null); setFormEch({ code: '', indiceSalarial: '' }); setModalEch(true); };
+  const openEditEch = (e) => { setEditEchId(e.id); setFormEch({ code: e.code, indiceSalarial: e.indiceSalarial }); setModalEch(true); };
   const handleSaveEch = async () => {
-    if (!formEch.code || !formEch.indiceSalarial || !formEch.categorieId) { setError('Tous les champs obligatoires'); return; }
-    const payload = { code: formEch.code, indiceSalarial: parseFloat(formEch.indiceSalarial), categorie: { id: formEch.categorieId } };
+    if (!formEch.code || !formEch.indiceSalarial) { setError('Code et indice salarial obligatoires'); return; }
+    const payload = { code: formEch.code, indiceSalarial: parseFloat(formEch.indiceSalarial) };
     try {
       if (editEchId) await axios.put(`${API_URL}/echelons/${editEchId}`, payload, getHeaders());
       else await axios.post(`${API_URL}/echelons`, payload, getHeaders());
@@ -457,12 +457,7 @@ const DirecteurDashboard = () => {
           <div className="form-grid">
             <div className="form-group"><label className="form-label">Code <span className="required">*</span></label><input className="form-input" placeholder="Ex: E1" value={formEch.code} onChange={e => setFormEch({ ...formEch, code: e.target.value })} /></div>
             <div className="form-group"><label className="form-label">Indice Salarial <span className="required">*</span></label><input type="number" className="form-input" placeholder="Ex: 350" value={formEch.indiceSalarial} onChange={e => setFormEch({ ...formEch, indiceSalarial: e.target.value })} /></div>
-            <div className="form-group full-width"><label className="form-label">Catégorie <span className="required">*</span></label>
-              <select className="form-select" value={formEch.categorieId} onChange={e => setFormEch({ ...formEch, categorieId: e.target.value })}>
-                <option value="">-- Sélectionner une catégorie --</option>
-                {categories.map(c => <option key={c.id} value={c.id}>{c.libelle} ({c.code})</option>)}
-              </select>
-            </div>
+
           </div>
         </Modal>
       )}

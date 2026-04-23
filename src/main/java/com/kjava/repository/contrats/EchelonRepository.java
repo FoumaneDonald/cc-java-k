@@ -1,8 +1,9 @@
-package com.kjava.repository;
+package com.kjava.repository.contrats;
 
-import com.kjava.models.Echelon;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.kjava.models.contrats.Echelon;
 
 import java.util.List;
 

@@ -1,12 +1,13 @@
-package com.kjava.services;
+package com.kjava.services.contrats;
 
-import com.kjava.models.Contrat;
-import com.kjava.models.Echelon;
-import com.kjava.models.Employe;
-import com.kjava.repository.CategorieRepository;
-import com.kjava.repository.ContratRepository;
-import com.kjava.repository.EchelonRepository;
-import com.kjava.repository.EmployeRepository;
+import com.kjava.models.contrats.Contrat;
+import com.kjava.models.contrats.Echelon;
+import com.kjava.models.contrats.Employe;
+import com.kjava.repository.contrats.CategorieRepository;
+import com.kjava.repository.contrats.ContratRepository;
+import com.kjava.repository.contrats.EchelonRepository;
+import com.kjava.repository.contrats.EmployeRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;

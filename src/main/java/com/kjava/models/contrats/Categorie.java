@@ -1,4 +1,4 @@
-package com.kjava.models;
+package com.kjava.models.contrats;
 
 import java.util.List;
 
