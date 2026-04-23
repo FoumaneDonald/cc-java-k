@@ -1,5 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, FileText } from 'lucide-react';
+import axios from 'axios';
+
+const API_URL = 'http://localhost:3004';
+const getHeaders = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
 
 const TYPE_OPTIONS = ['CDI', 'CDD', 'Stage'];
 
@@ -8,14 +12,28 @@ const INIT = {
   typeContrat: 'CDI',
   dateDebut: '',
   dateFin: '',
+  echelonId: '',
 };
 
 export default function ContratForm({ onClose, onCreated }) {
   const [form, setForm] = useState(INIT);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
+  const [echelons, setEchelons] = useState([]);
 
   const dateFinRequired = form.typeContrat === 'CDD' || form.typeContrat === 'Stage';
+
+  useEffect(() => {
+    const loadEchelons = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/echelons`, getHeaders());
+        setEchelons(response.data);
+      } catch (err) {
+        console.error('Erreur chargement échelons:', err);
+      }
+    };
+    loadEchelons();
+  }, []);
 
   function set(field, value) {
     setForm((prev) => {
@@ -35,6 +53,7 @@ export default function ContratForm({ onClose, onCreated }) {
       e.dateFin = 'Date de fin obligatoire pour CDD / Stage (RG-M4-02)';
     if (form.dateFin && form.dateDebut && form.dateFin <= form.dateDebut)
       e.dateFin = 'La date de fin doit être postérieure à la date de début';
+    if (!form.echelonId)                   e.echelonId = 'Échelon obligatoire';
     return e;
   }
 
@@ -44,13 +63,13 @@ export default function ContratForm({ onClose, onCreated }) {
 
     setSubmitting(true);
     try {
+      const selectedEchelon = echelons.find(e => e.id === Number(form.echelonId));
       const payload = {
         employeId:   Number(form.employeId),
         typeContrat: form.typeContrat,
         dateDebut:   form.dateDebut,
         dateFin:     form.dateFin || null,
-        categorie:   null,
-        echelon:     null,
+        echelon:     selectedEchelon ? { id: selectedEchelon.id } : null,
       };
       await onCreated(payload);
     } finally {
@@ -142,22 +161,28 @@ export default function ContratForm({ onClose, onCreated }) {
               )}
               {errors.dateFin && <span className="form-error">{errors.dateFin}</span>}
             </div>
-          </div>
 
-          <div style={{
-            marginTop: 18,
-            padding: '12px 14px',
-            background: 'var(--bg3)',
-            borderRadius: 8,
-            border: '1px solid var(--border)',
-            fontSize: 12.5,
-            color: 'var(--text3)',
-            lineHeight: 1.6,
-          }}>
-            ℹ️ La <strong style={{ color: 'var(--text2)' }}>catégorie</strong> et
-            l'<strong style={{ color: 'var(--text2)' }}>échelon</strong> seront
-            disponibles une fois les endpoints <code>/categories</code> et{' '}
-            <code>/echelons</code> ajoutés au backend.
+            {/* Échelon */}
+            <div className="form-group full-width">
+              <label className="form-label">
+                Échelon <span className="required">*</span>
+              </label>
+              <select
+                className={`form-select ${errors.echelonId ? 'error' : ''}`}
+                value={form.echelonId}
+                onChange={(e) => set('echelonId', e.target.value)}
+              >
+                <option value="">-- Sélectionner un échelon --</option>
+                {echelons.map(echelon => (
+                  <option key={echelon.id} value={echelon.id}>
+                    {echelon.code} - Indice: {echelon.indiceSalarial} 
+                    {echelon.categorie && ` (${echelon.categorie.libelle})`}
+                  </option>
+                ))}
+              </select>
+              {errors.echelonId && <span className="form-error">{errors.echelonId}</span>}
+              <span className="form-hint">L'échelon détermine automatiquement la catégorie</span>
+            </div>
           </div>
         </div>
 

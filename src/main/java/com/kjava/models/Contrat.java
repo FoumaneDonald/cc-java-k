@@ -3,33 +3,31 @@ package com.kjava.models;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "contrats")
 public class Contrat {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long employeId; // Lien vers le module M1
+    @ManyToOne
+    @JoinColumn(name = "operant_id", nullable = true)
+    private Employe operant;
 
-    private String typeContrat; // CDD, CDI, Stage (RG-M4-02)
-    
+    @ManyToOne
+    @JoinColumn(name = "chef_service_id")
+    private Employe chefService;
+
+    private String typeContrat; // CDD, CDI, Stage
+
     private LocalDate dateDebut;
-    private LocalDate dateFin; // Obligatoire si CDD/Stage (RG-M4-02)
+    private LocalDate dateFin;
 
     @Enumerated(EnumType.STRING)
-    private StatutContrat statut = StatutContrat.BROUILLON; // RG-M4-01
+    private StatutContrat statut = StatutContrat.BROUILLON;
 
     @ManyToOne
     private Categorie categorie;
@@ -39,77 +37,52 @@ public class Contrat {
 
     private LocalDateTime dateCreation = LocalDateTime.now();
 
-    // Méthodes métier intégrées (NB2)
-    public boolean isModifiable() {
-        return this.statut == StatutContrat.BROUILLON; // RG-M4-04
-    }
-
     public enum StatutContrat {
         BROUILLON, EN_COURS, TERMINE, ANNULE
     }
 
-	public String getTypeContrat() {
-		return typeContrat;
-	}
+    // ── Méthode métier ──────────────────────────────────────────
+    public boolean isModifiable() {
+        return this.statut == StatutContrat.BROUILLON;
+    }
 
-	public void setTypeContrat(String typeContrat) {
-		this.typeContrat = typeContrat;
-	}
+    // ── id ──────────────────────────────────────────────────────
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-	public LocalDate getDateDebut() {
-		return dateDebut;
-	}
+    // ── operant ─────────────────────────────────────────────────
+    public Employe getOperant() { return operant; }
+    public void setOperant(Employe operant) { this.operant = operant; }
 
-	public void setDateDebut(LocalDate dateDebut) {
-		this.dateDebut = dateDebut;
-	}
+    // ── chefService ─────────────────────────────────────────────
+    public Employe getChefService() { return chefService; }
+    public void setChefService(Employe chefService) { this.chefService = chefService; }
 
-	public LocalDate getDateFin() {
-		return dateFin;
-	}
+    // ── typeContrat ─────────────────────────────────────────────
+    public String getTypeContrat() { return typeContrat; }
+    public void setTypeContrat(String typeContrat) { this.typeContrat = typeContrat; }
 
-	public void setDateFin(LocalDate dateFin) {
-		this.dateFin = dateFin;
-	}
+    // ── dateDebut ────────────────────────────────────────────────
+    public LocalDate getDateDebut() { return dateDebut; }
+    public void setDateDebut(LocalDate dateDebut) { this.dateDebut = dateDebut; }
 
-	public StatutContrat getStatut() {
-		return statut;
-	}
+    // ── dateFin ──────────────────────────────────────────────────
+    public LocalDate getDateFin() { return dateFin; }
+    public void setDateFin(LocalDate dateFin) { this.dateFin = dateFin; }
 
-	public void setStatut(StatutContrat statut) {
-		this.statut = statut;
-	}
+    // ── statut ───────────────────────────────────────────────────
+    public StatutContrat getStatut() { return statut; }
+    public void setStatut(StatutContrat statut) { this.statut = statut; }
 
-	public Categorie getCategorie() {
-		return categorie;
-	}
+    // ── categorie ────────────────────────────────────────────────
+    public Categorie getCategorie() { return categorie; }
+    public void setCategorie(Categorie categorie) { this.categorie = categorie; }
 
-	public void setCategorie(Categorie categorie) {
-		this.categorie = categorie;
-	}
+    // ── echelon ──────────────────────────────────────────────────
+    public Echelon getEchelon() { return echelon; }
+    public void setEchelon(Echelon echelon) { this.echelon = echelon; }
 
-	public Echelon getEchelon() {
-		return echelon;
-	}
-
-	public void setEchelon(Echelon echelon) {
-		this.echelon = echelon;
-	}
-
-	public LocalDateTime getDateCreation() {
-		return dateCreation;
-	}
-
-	public void setDateCreation(LocalDateTime dateCreation) {
-		this.dateCreation = dateCreation;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public Long getEmployeId() {
-		return employeId;
-	}
-    
+    // ── dateCreation ─────────────────────────────────────────────
+    public LocalDateTime getDateCreation() { return dateCreation; }
+    public void setDateCreation(LocalDateTime dateCreation) { this.dateCreation = dateCreation; }
 }

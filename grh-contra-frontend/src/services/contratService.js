@@ -1,14 +1,14 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+const API_URL = 'http://localhost:3004';
 
-export const getAllContrats = () => axios.get(`${API_URL}/contrats`);
+const getHeaders = () => ({
+  headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+});
 
-export const activerContrat = (id) => axios.put(`${API_URL}/contrats/${id}/activer`);
-
-export const annulerContrat = (id, motif) =>
-  axios.put(`${API_URL}/contrats/${id}/annuler`, { motif });
-
-// ✅ NOUVEAU
-export const terminerContrat = (id) =>
-  axios.put(`${API_URL}/contrats/${id}/terminer`);
+export const getAllContrats = () => axios.get(`${API_URL}/contrats`, getHeaders());
+export const getMonContrat = () => axios.get(`${API_URL}/contrats/mon-contrat`, getHeaders());
+export const creerContrat = (data) => axios.post(`${API_URL}/contrats`, data, getHeaders());
+export const activerContrat = (id) => axios.put(`${API_URL}/contrats/${id}/activer`, {}, getHeaders());
+export const annulerContrat = (id, motif) => axios.put(`${API_URL}/contrats/${id}/annuler`, { motif }, getHeaders());
+export const terminerContrat = (id) => axios.put(`${API_URL}/contrats/${id}/terminer`, {}, getHeaders());

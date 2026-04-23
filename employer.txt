@@ -1,0 +1,23 @@
+-- Directeur (mot de passe: password)
+INSERT INTO employes (nom, age, famille, login, mot_de_passe, role)
+VALUES (
+  'Directeur Principal', 40, 'Dupont', 'directeur',
+  '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+  'DIRECTEUR'
+);
+
+-- Chef de service desmon (mot de passe: mot123456)
+INSERT INTO employes (nom, age, famille, login, mot_de_passe, role)
+VALUES (
+  'Desmon', 35, '', 'desmon',
+  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LnS8PqBQVgS',
+  'CHEF_SERVICE'
+);
+
+-- Opérant jez (mot de passe: qwerty1234)
+INSERT INTO employes (nom, age, famille, login, mot_de_passe, role)
+VALUES (
+  'Jez', 25, '', 'jez',
+  '$2a$10$TbOPMOrpHdGsRPqO7XJWT.JQIGXeKBqrGiCCJqiXkAq5RKP7eCrS',
+  'OPERANT'
+);

@@ -2,6 +2,8 @@ package com.kjava.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,6 +22,7 @@ public class Categorie {
     private String libelle;
 
     @OneToMany(mappedBy = "categorie")
+    @JsonIgnore   // ← Évite la boucle infinie Categorie→Echelon→Categorie→...
     private List<Echelon> echelons;
 
 	public Long getId() {
