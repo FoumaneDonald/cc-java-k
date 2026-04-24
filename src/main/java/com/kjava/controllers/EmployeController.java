@@ -3,7 +3,6 @@ package com.kjava.controllers;
 import com.kjava.config.JwtUtil;
 import com.kjava.models.Employe;
 import com.kjava.services.EmployeService;
-
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,38 +27,38 @@ public class EmployeController {
         return ResponseEntity.ok(employeService.creer(employe));
     }
 
-    // DIRECTEUR — voir tous
+    // DIRECTEUR — voir tous les employés
     @GetMapping
     public List<Employe> getAll() {
         return employeService.findAll();
     }
 
-    // CHEF_SERVICE / DIRECTEUR — voir tous les employés (pour sélection dans formulaire contrat)
+    // CHEF_SERVICE — voir TOUS les employés peu importe le rôle (pour formulaire contrat)
     @GetMapping("/tous")
     public List<Employe> getTous() {
         return employeService.findAll();
     }
 
-    // CHEF_SERVICE / DIRECTEUR — voir tous les opérants
+    // CHEF_SERVICE — voir uniquement les opérants
     @GetMapping("/operants")
     public List<Employe> getOperants() {
         return employeService.findOperants();
     }
 
-    // Tous les authentifiés — voir tous les chefs de service
+    // OPERANT — voir tous les chefs de service
     @GetMapping("/chefs-service")
     public List<Employe> getChefsService() {
         return employeService.findChefsService();
     }
 
-    // Tous les authentifiés — voir son propre profil
+    // OPERANT — voir son propre profil
     @GetMapping("/profil")
     public ResponseEntity<Employe> getProfil(HttpServletRequest request) {
         Long id = extractId(request);
         return ResponseEntity.ok(employeService.findById(id));
     }
 
-    // Tous les authentifiés — modifier son nom et famille
+    // OPERANT — modifier son nom et famille
     @PutMapping("/profil")
     public ResponseEntity<Employe> modifierProfil(@RequestBody Map<String, String> body,
                                                    HttpServletRequest request) {

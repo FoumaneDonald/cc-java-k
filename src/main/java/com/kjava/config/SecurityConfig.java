@@ -3,6 +3,7 @@ package com.kjava.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,24 +34,33 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
-                // Employé : profil et chefs-service accessibles à tous les authentifiés
+
+                // Profil et chefs-service accessibles à tous les connectés
                 .requestMatchers("/employes/profil").authenticated()
                 .requestMatchers("/employes/chefs-service").authenticated()
-                // Lister tous les employés (pour le formulaire contrat) : DIRECTEUR et CHEF_SERVICE
-                .requestMatchers("/employes/operants").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
-                // Lister TOUS les employés pour la sélection dans le formulaire contrat
-                .requestMatchers("/employes/tous").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
+
+                // Liste de tous les employés : DIRECTEUR et CHEF_SERVICE
+                .requestMatchers(HttpMethod.GET, "/employes/tous").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
+                .requestMatchers(HttpMethod.GET, "/employes/operants").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
+
+                // Gestion complète des employés : DIRECTEUR uniquement
                 .requestMatchers("/employes/**").hasRole("DIRECTEUR")
-                // Catégories et échelons : lecture par tous les authentifiés (GET), écriture par DIRECTEUR et CHEF_SERVICE
-                .requestMatchers(org.springframework.http.HttpMethod.GET, "/categories/**").authenticated()
-                .requestMatchers(org.springframework.http.HttpMethod.GET, "/echelons/**").authenticated()
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/categories/**").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
-                .requestMatchers(org.springframework.http.HttpMethod.PUT, "/categories/**").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
-                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/categories/**").hasRole("DIRECTEUR")
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/echelons/**").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
-                .requestMatchers(org.springframework.http.HttpMethod.PUT, "/echelons/**").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
-                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/echelons/**").hasRole("DIRECTEUR")
+
+                // Catégories : lecture par tous, écriture par DIRECTEUR et CHEF_SERVICE, suppression DIRECTEUR
+                .requestMatchers(HttpMethod.GET,    "/categories/**").authenticated()
+                .requestMatchers(HttpMethod.POST,   "/categories/**").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
+                .requestMatchers(HttpMethod.PUT,    "/categories/**").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
+                .requestMatchers(HttpMethod.DELETE, "/categories/**").hasRole("DIRECTEUR")
+
+                // Échelons : même politique
+                .requestMatchers(HttpMethod.GET,    "/echelons/**").authenticated()
+                .requestMatchers(HttpMethod.POST,   "/echelons/**").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
+                .requestMatchers(HttpMethod.PUT,    "/echelons/**").hasAnyRole("DIRECTEUR", "CHEF_SERVICE")
+                .requestMatchers(HttpMethod.DELETE, "/echelons/**").hasRole("DIRECTEUR")
+
+                // Contrats : tous les connectés
                 .requestMatchers("/contrats/**").authenticated()
+
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

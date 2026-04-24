@@ -4,6 +4,7 @@ import com.kjava.config.JwtUtil;
 import com.kjava.models.Contrat;
 import com.kjava.models.Echelon;
 import com.kjava.models.Employe;
+import com.kjava.repository.CategorieRepository;
 import com.kjava.repository.EchelonRepository;
 import com.kjava.repository.EmployeRepository;
 import com.kjava.services.ContratService;
@@ -31,59 +32,80 @@ public class ContratController {
     private EchelonRepository echelonRepository;
 
     @Autowired
+    private CategorieRepository categorieRepository;
+
+    @Autowired
     private EmployeRepository employeRepository;
 
     // CHEF_SERVICE — créer un contrat
+    // Payload attendu :
+    // {
+    //   "operant":   { "id": 5 },
+    //   "typeContrat": "CDD",
+    //   "dateDebut": "2024-01-01",
+    //   "dateFin":   "2024-12-31",   // optionnel
+    //   "categorie": { "id": 2 },
+    //   "echelon":   { "id": 3 }
+    // }
     @PostMapping
-    public ResponseEntity<Contrat> create(@RequestBody Map<String, Object> payload,
-                                           HttpServletRequest request) {
+    public ResponseEntity<?> create(@RequestBody Map<String, Object> payload,
+                                    HttpServletRequest request) {
         try {
             Long chefId = extractId(request);
-            
-            // Valider les champs obligatoires
-            if (!payload.containsKey("employeId") || !payload.containsKey("typeContrat") || 
-                !payload.containsKey("dateDebut")) {
-                return ResponseEntity.badRequest().build();
+
+            // ── 1. Opérant ──────────────────────────────────────────────
+            @SuppressWarnings("unchecked")
+            Map<String, Object> operantMap = (Map<String, Object>) payload.get("operant");
+            if (operantMap == null || operantMap.get("id") == null) {
+                return ResponseEntity.badRequest().body("L'opérant est obligatoire");
             }
-            
-            // Créer le contrat
+            Long operantId = ((Number) operantMap.get("id")).longValue();
+            Employe operant = employeRepository.findById(operantId)
+                .orElseThrow(() -> new RuntimeException("Employé introuvable : " + operantId));
+
+            // ── 2. Type et dates ─────────────────────────────────────────
+            String typeContrat = (String) payload.get("typeContrat");
+            if (typeContrat == null || typeContrat.isBlank()) {
+                return ResponseEntity.badRequest().body("Le type de contrat est obligatoire");
+            }
+
+            String dateDebutStr = (String) payload.get("dateDebut");
+            if (dateDebutStr == null || dateDebutStr.isBlank()) {
+                return ResponseEntity.badRequest().body("La date de début est obligatoire");
+            }
+
+            // ── 3. Échelon ───────────────────────────────────────────────
+            @SuppressWarnings("unchecked")
+            Map<String, Object> echelonMap = (Map<String, Object>) payload.get("echelon");
+            if (echelonMap == null || echelonMap.get("id") == null) {
+                return ResponseEntity.badRequest().body("L'échelon est obligatoire");
+            }
+            Long echelonId = ((Number) echelonMap.get("id")).longValue();
+            Echelon echelon = echelonRepository.findById(echelonId)
+                .orElseThrow(() -> new RuntimeException("Échelon introuvable : " + echelonId));
+
+            // ── 4. Construire l'objet Contrat ────────────────────────────
             Contrat contrat = new Contrat();
-            
-            // Employé (operant)
-            Long employeId = ((Number) payload.get("employeId")).longValue();
-            Employe operant = employeRepository.findById(employeId)
-                .orElseThrow(() -> new RuntimeException("Employé introuvable : " + employeId));
             contrat.setOperant(operant);
-            
-            // Chef de service
-            Employe chefService = employeRepository.findById(chefId)
-                .orElseThrow(() -> new RuntimeException("Chef de service introuvable : " + chefId));
-            contrat.setChefService(chefService);
-            
-            // Type et dates
-            contrat.setTypeContrat((String) payload.get("typeContrat"));
-            contrat.setDateDebut(LocalDate.parse((String) payload.get("dateDebut")));
-            if (payload.containsKey("dateFin") && payload.get("dateFin") != null) {
-                contrat.setDateFin(LocalDate.parse((String) payload.get("dateFin")));
+            contrat.setTypeContrat(typeContrat);
+            contrat.setDateDebut(LocalDate.parse(dateDebutStr));
+
+            String dateFinStr = (String) payload.get("dateFin");
+            if (dateFinStr != null && !dateFinStr.isBlank()) {
+                contrat.setDateFin(LocalDate.parse(dateFinStr));
             }
-            
-            // Échelon (optionnel)
-            if (payload.containsKey("echelon") && payload.get("echelon") != null) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> echelonMap = (Map<String, Object>) payload.get("echelon");
-                if (echelonMap.containsKey("id")) {
-                    Long echelonId = ((Number) echelonMap.get("id")).longValue();
-                    Echelon echelon = echelonRepository.findById(echelonId)
-                        .orElseThrow(() -> new RuntimeException("Échelon introuvable : " + echelonId));
-                    contrat.setEchelon(echelon);
-                    // La catégorie est déduite de l'échelon
-                    contrat.setCategorie(echelon.getCategorie());
-                }
-            }
-            
+
+            contrat.setEchelon(echelon);
+            // La catégorie est portée par l'échelon (déduite automatiquement)
+            contrat.setCategorie(echelon.getCategorie());
+
+            // ── 5. Sauvegarder via le service ────────────────────────────
             return ResponseEntity.ok(contratService.creerContrat(contrat, chefId));
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().body("Erreur interne : " + e.getMessage());
         }
     }
 
@@ -106,13 +128,13 @@ public class ContratController {
         return ResponseEntity.ok(contratService.terminerContrat(id));
     }
 
-    // DIRECTEUR / CHEF_SERVICE — voir tous
+    // DIRECTEUR / CHEF_SERVICE — voir tous les contrats
     @GetMapping
     public List<Contrat> getAll() {
         return contratService.findAll();
     }
 
-    // OPERANT — voir son contrat
+    // OPERANT — voir ses propres contrats
     @GetMapping("/mon-contrat")
     public ResponseEntity<List<Contrat>> getMonContrat(HttpServletRequest request) {
         Long id = extractId(request);
