@@ -1,10 +1,10 @@
-package com.kjava.repository.contrats;
+package com.kjava.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.kjava.models.contrats.Contrat;
-import com.kjava.models.contrats.Employe;
+import com.kjava.models.Contrat;
+import com.kjava.models.Employe;
 
 import java.util.List;
 import java.util.Optional;

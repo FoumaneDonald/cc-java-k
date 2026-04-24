@@ -1,8 +1,8 @@
-package com.kjava.controllers.contrats;
+package com.kjava.controllers;
 
-import com.kjava.config.contrats.JwtUtil;
-import com.kjava.models.contrats.Categorie;
-import com.kjava.repository.contrats.CategorieRepository;
+import com.kjava.config.JwtUtil;
+import com.kjava.models.Categorie;
+import com.kjava.repository.CategorieRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;

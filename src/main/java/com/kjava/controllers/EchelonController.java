@@ -1,9 +1,9 @@
-package com.kjava.controllers.contrats;
+package com.kjava.controllers;
 
-import com.kjava.models.contrats.Categorie;
-import com.kjava.models.contrats.Echelon;
-import com.kjava.repository.contrats.CategorieRepository;
-import com.kjava.repository.contrats.EchelonRepository;
+import com.kjava.models.Categorie;
+import com.kjava.models.Echelon;
+import com.kjava.repository.CategorieRepository;
+import com.kjava.repository.EchelonRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

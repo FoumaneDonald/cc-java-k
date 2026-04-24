@@ -1,4 +1,4 @@
-package com.kjava.models.contrats;
+package com.kjava.models;
 
 import jakarta.persistence.*;
 import lombok.Data;

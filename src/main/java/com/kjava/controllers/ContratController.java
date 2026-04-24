@@ -1,12 +1,12 @@
-package com.kjava.controllers.contrats;
+package com.kjava.controllers;
 
-import com.kjava.config.contrats.JwtUtil;
-import com.kjava.models.contrats.Contrat;
-import com.kjava.models.contrats.Echelon;
-import com.kjava.models.contrats.Employe;
-import com.kjava.repository.contrats.EchelonRepository;
-import com.kjava.repository.contrats.EmployeRepository;
-import com.kjava.services.contrats.ContratService;
+import com.kjava.config.JwtUtil;
+import com.kjava.models.Contrat;
+import com.kjava.models.Echelon;
+import com.kjava.models.Employe;
+import com.kjava.repository.EchelonRepository;
+import com.kjava.repository.EmployeRepository;
+import com.kjava.services.ContratService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;

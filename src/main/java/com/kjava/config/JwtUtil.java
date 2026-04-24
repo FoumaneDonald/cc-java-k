@@ -1,11 +1,11 @@
-package com.kjava.config.contrats;
+package com.kjava.config;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.kjava.models.contrats.Employe;
+import com.kjava.models.Employe;
 
 import java.security.Key;
 import java.util.Date;

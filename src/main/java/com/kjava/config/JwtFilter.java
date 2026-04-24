@@ -1,4 +1,4 @@
-package com.kjava.config.contrats;
+package com.kjava.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

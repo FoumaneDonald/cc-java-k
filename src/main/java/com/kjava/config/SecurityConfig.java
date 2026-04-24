@@ -1,4 +1,4 @@
-package com.kjava.config.contrats;
+package com.kjava.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

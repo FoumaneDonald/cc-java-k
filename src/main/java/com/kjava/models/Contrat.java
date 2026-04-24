@@ -1,4 +1,4 @@
-package com.kjava.models.contrats;
+package com.kjava.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

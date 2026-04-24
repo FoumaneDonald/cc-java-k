@@ -1,7 +1,7 @@
-package com.kjava.services.contrats;
+package com.kjava.services;
 
-import com.kjava.models.contrats.Employe;
-import com.kjava.repository.contrats.EmployeRepository;
+import com.kjava.models.Employe;
+import com.kjava.repository.EmployeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
